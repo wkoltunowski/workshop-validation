@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ValidationTest {
     @Test
     public void shouldDetectOverlappingRows() {
-        Table table = new Table(asList(new OverlappingNumbersValidator()));
+        Table table = new Table(asList(new OverlappingDatesValidator()));
         table.addRows(
                 row(from("2018-01-01 12:15"), to("2018-01-01 12:30")),
                 row(from("2018-01-01 12:30"), to("2018-01-01 12:45")));

@@ -10,12 +10,12 @@ import static com.falco.workshop.validation.ValidationMessage.validationError;
 import static com.google.common.collect.ImmutableSet.of;
 import static java.util.Arrays.asList;
 
-public class OverlappingNumbersValidator implements RowValidator {
+public class OverlappingDatesValidator implements RowValidator {
     @Override
     public Set<ValidationMessage> validate(Row row, List<Row> rows) {
         for (Row another : rows) {
             if (overlaps(rowRange(row), rowRange(another))) {
-                return of(validationError("msg.validation.overlapping.integers", asList("from", "to")));
+                return of(validationError("msg.validation.overlapping.dates", asList("from", "to")));
             }
         }
         return of();
