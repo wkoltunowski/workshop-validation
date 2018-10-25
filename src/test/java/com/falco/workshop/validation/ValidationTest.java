@@ -19,8 +19,8 @@ public class ValidationTest {
                 row(from("2018-01-01 12:15"), to("2018-01-01 12:30")),
                 row(from("2018-01-01 12:30"), to("2018-01-01 12:45")));
         table.validateTable();
-        assertThat(table.rowAt(0).validationResults()).containsOnly(validationError("msg.validation.overlapping.integers", asList("from", "to")));
-        assertThat(table.rowAt(1).validationResults()).containsOnly(validationError("msg.validation.overlapping.integers", asList("from", "to")));
+        assertThat(table.rowAt(0).validationResults()).containsOnly(validationError("msg.validation.overlapping.dates", asList("from", "to")));
+        assertThat(table.rowAt(1).validationResults()).containsOnly(validationError("msg.validation.overlapping.dates", asList("from", "to")));
     }
 
     private Consumer<Map<String, Object>> to(String to) {
@@ -32,8 +32,7 @@ public class ValidationTest {
     }
 
     private LocalDateTime date(String from) {
-        String[] splitted = from.split(" ");
-        return LocalDateTime.parse(splitted[0] + "T" + splitted[1]);
+        return LocalDateTime.parse(from.replaceAll(" ","T"));
     }
 
     @SafeVarargs
