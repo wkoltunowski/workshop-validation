@@ -23,6 +23,17 @@ public class ValidationTest {
         assertThat(table.rowAt(1).validationResults()).containsOnly(validationError("msg.validation.overlapping.dates", asList("from", "to")));
     }
 
+    @Test
+    public void shouldDetectOverlappingRowsWithNulls() {
+        Table table = new Table(asList(new OverlappingDatesValidator()));
+        table.addRows(
+                row(from(null), to("2018-01-01 12:30")),
+                row(from("2018-01-01 12:30"), to(null)));
+        table.validateTable();
+        assertThat(table.rowAt(0).validationResults()).containsOnly(validationError("msg.validation.overlapping.dates", asList("from", "to")));
+        assertThat(table.rowAt(1).validationResults()).containsOnly(validationError("msg.validation.overlapping.dates", asList("from", "to")));
+    }
+
     private Consumer<Map<String, Object>> to(String to) {
         return attributes -> attributes.put("to", date(to));
     }
@@ -32,7 +43,7 @@ public class ValidationTest {
     }
 
     private LocalDateTime date(String from) {
-        return LocalDateTime.parse(from.replaceAll(" ","T"));
+        return LocalDateTime.parse(from.replaceAll(" ", "T"));
     }
 
     @SafeVarargs
