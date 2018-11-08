@@ -68,7 +68,7 @@ public class ValidationTest {
     @Test
     public void shouldDetectUnique() {
         Table table = new Table(asList(new RowMarkingValidator(
-                new GroupingValidator("group", new RowCount(1)),
+                new GroupingValidator("group", new RowCountValidator(1)),
                 validationError("msg.validation.overlapping.dates.in.group"))));
         table.addRows(
                 row(from("2018-01-01 12:15"), to("2018-01-01 12:30"), group("A")),
@@ -83,7 +83,7 @@ public class ValidationTest {
     @Test
     public void shouldDetectUniqueAmongNotVisibleRows() {
         Table table = new Table(asList(new RowMarkingValidator(
-                new ExtraRowsValidator(asList(row(group("A"))), new GroupingValidator("group", new RowCount(1))),
+                new ExtraRowsValidator(asList(row(group("A"))), new GroupingValidator("group", new RowCountValidator(1))),
                 validationError("msg.validation.overlapping.dates.against.extra.rows"))));
 
         table.addRows(

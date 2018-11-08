@@ -3,10 +3,10 @@ package com.falco.workshop.validation;
 import java.util.Collections;
 import java.util.List;
 
-public class RowCount implements Validator {
+public class RowCountValidator implements Validator {
     private final int count;
 
-    public RowCount(int count) {
+    public RowCountValidator(int count) {
         this.count = count;
     }
 
