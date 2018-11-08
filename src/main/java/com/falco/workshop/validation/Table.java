@@ -17,9 +17,9 @@ public class Table {
     public void validateTable() {
         for (Row row : rows) {
             row.cleanValidation();
-            for (RowValidator validator : validators) {
-                row.addValidationMessages(validator.validate(row, rows));
-            }
+        }
+        for (RowValidator validator : validators) {
+            validator.validate(rows);
         }
     }
 

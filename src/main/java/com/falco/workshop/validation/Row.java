@@ -2,8 +2,6 @@ package com.falco.workshop.validation;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -26,16 +24,6 @@ public class Row {
     }
 
     @Override
-    public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
     }
@@ -43,9 +31,9 @@ public class Row {
     public void addValidationMessages(Collection<ValidationMessage> validationMessages) {
         this.validationResults =
                 new Builder<ValidationMessage>()
-                .addAll(validationResults)
-                .addAll(validationMessages)
-                .build();
+                        .addAll(validationResults)
+                        .addAll(validationMessages)
+                        .build();
     }
 
     public <T> T readAs(String property) {

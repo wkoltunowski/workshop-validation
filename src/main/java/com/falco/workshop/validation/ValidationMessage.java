@@ -5,15 +5,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.List;
-
 public class ValidationMessage {
     private final String msg;
-    private final List<String> properties;
 
-    public ValidationMessage(String msg, List<String> properties) {
+    public ValidationMessage(String msg) {
         this.msg = msg;
-        this.properties = properties;
     }
 
     @Override
@@ -31,7 +27,7 @@ public class ValidationMessage {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
     }
 
-    public static ValidationMessage validationError(String msg, List<String> properties) {
-        return new ValidationMessage(msg, properties);
+    public static ValidationMessage validationError(String msg) {
+        return new ValidationMessage(msg);
     }
 }
