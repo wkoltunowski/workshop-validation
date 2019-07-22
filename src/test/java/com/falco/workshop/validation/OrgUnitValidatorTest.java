@@ -23,35 +23,33 @@ public class OrgUnitValidatorTest {
 
     private Table table;
 
-    private void givenValidator() {
+    private void validateRows(Row... rows) {
         RowValidator v = composite(
                 rowValidator("msg.empty.code", emptyProperty("code")),
                 rowValidator("msg.empty.company", emptyProperty("company")),
                 rowValidator("msg.invalid.interval", invalidInterval("from", "to")),
                 rowValidator("msg.overlapping.codes", groupingBy(of("code", "company"), overlapping("from", "to")))
         );
-//        table = new Table(of(new OrgUnitValidator()));
-        table = new Table(of(v));
+        table = new Table(of(new OrgUnitValidator()));
+//        table = new Table(of(v));
+        table.addRows(rows);
+        table.validateTable();
     }
-
 
     @Test
     public void shouldDetectEmptyCode() {
-        givenValidator();
         validateRows(row(from("2018-01-01"), to("2018-01-31"), code(null), company("X")));
         assertThat(rowValidationResults(0)).containsOnly(validationError("msg.empty.code"));
     }
 
     @Test
     public void shouldDetectEmptyCompany() {
-        givenValidator();
         validateRows(row(from("2018-01-01"), to("2018-01-31"), code("POR_1"), company(null)));
         assertThat(rowValidationResults(0)).containsOnly(validationError("msg.empty.company"));
     }
 
     @Test
     public void shouldDetectFromAfterTo() {
-        givenValidator();
         validateRows(row(from("2018-02-01"), to("2018-01-01"), code("POR_1"), company("X")));
         assertThat(rowValidationResults(0)).containsOnly(validationError("msg.invalid.interval"));
     }
@@ -59,7 +57,6 @@ public class OrgUnitValidatorTest {
 
     @Test
     public void shouldDetectDuplicateCodes() {
-        givenValidator();
         validateRows(
                 row(from("2018-01-01"), to("2018-01-31"), code("POR_1"), company("X")),
                 row(from("2018-01-10"), to("2018-02-01"), code("POR_1"), company("X")));
@@ -70,7 +67,6 @@ public class OrgUnitValidatorTest {
 
     @Test
     public void shouldTreatNullAsInfinity() {
-        givenValidator();
         validateRows(
                 row(from("2018-01-01"), to(null), code("POR_1"), company("X")),
                 row(from("2018-01-10"), to("2018-02-01"), code("POR_1"), company("X")));
@@ -81,7 +77,6 @@ public class OrgUnitValidatorTest {
 
     @Test
     public void shouldNotDetectWhenDifferentCodes() {
-        givenValidator();
         validateRows(
                 row(from("2018-01-01"), to("2018-01-31"), code("POR_1"), company("X")),
                 row(from("2018-01-10"), to("2018-02-01"), code("POR_2"), company("X")));
@@ -92,7 +87,6 @@ public class OrgUnitValidatorTest {
 
     @Test
     public void shouldNotDetectDuplicateCodesWhenNoOverlap() {
-        givenValidator();
         validateRows(
                 row(from("2018-01-01"), to("2018-01-10"), code("POR_1"), company("X")),
                 row(from("2018-01-11"), to("2018-01-31"), code("POR_1"), company("X")));
@@ -103,7 +97,6 @@ public class OrgUnitValidatorTest {
 
     @Test
     public void shouldNotDetectDuplicateCodesWhenDifferentCompany() {
-        givenValidator();
         validateRows(
                 row(from("2018-01-01"), to("2018-01-10"), code("POR_1"), company("X")),
                 row(from("2018-01-05"), to("2018-01-31"), code("POR_1"), company("Y")));
@@ -114,11 +107,6 @@ public class OrgUnitValidatorTest {
 
     private Consumer<Map<String, Object>> company(String companyCode) {
         return m -> m.put("company", companyCode);
-    }
-
-    private void validateRows(Row... rows) {
-        table.addRows(rows);
-        table.validateTable();
     }
 
     private Set<ValidationMessage> rowValidationResults(int i) {

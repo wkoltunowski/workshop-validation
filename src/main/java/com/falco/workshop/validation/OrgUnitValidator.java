@@ -11,19 +11,20 @@ public class OrgUnitValidator implements RowValidator {
     @Override
     public void validate(List<Row> rows) {
         for (Row row : rows) {
+            if (row.readAs("code") == null) {
+                row.addValidationMessages(of(validationError("msg.empty.code")));
+            }
+            if (row.readAs("company") == null) {
+                row.addValidationMessages(of(validationError("msg.empty.company")));
+            }
+        }
+        for (Row row : rows) {
             for (Row another : rows) {
-                if (row.readAs("code") == null) {
-                    row.addValidationMessages(of(validationError("msg.empty.code")));
-                }
-                if (row.readAs("company") == null) {
-                    row.addValidationMessages(of(validationError("msg.empty.company")));
-                }
                 if (from(row) != null && to(row) != null && from(row).isAfter(to(row))) {
                     row.addValidationMessages(of(validationError("msg.invalid.interval")));
-                }
-                if (row != another &&
-                        row.readAs("code").equals(another.readAs("code")) &&
-                        row.readAs("company").equals(another.readAs("company")) &&
+                } else if (row != another &&
+                        row.readAs("code") != null && row.readAs("code").equals(another.readAs("code")) &&
+                        row.readAs("company") != null && row.readAs("company").equals(another.readAs("company")) &&
                         overlap(row, another)) {
                     another.addValidationMessages(of(validationError("msg.overlapping.codes")));
                 }
@@ -35,7 +36,6 @@ public class OrgUnitValidator implements RowValidator {
         Row first = from(row) == null || from(row).isBefore(from(another)) ? row : another;
         Row second = from(row) == null || from(row).isBefore(from(another)) ? another : row;
         return from(second) == null || to(first) == null || !from(second).isAfter(to(first));
-
     }
 
     private LocalDate to(Row row) {
