@@ -1,11 +1,13 @@
-package com.falco.workshop.validation;
+package com.falco.workshop.validation.validators;
+
+import com.falco.workshop.validation.Validator;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static com.falco.workshop.validation.GroupingValidator.rowReader;
+import static com.falco.workshop.validation.validators.GroupingValidator.rowReader;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 

@@ -2,6 +2,7 @@ package com.falco.workshop.validation;
 
 import java.util.List;
 
+import static com.falco.workshop.validation.ValidationMessage.validationError;
 import static com.google.common.collect.ImmutableSet.of;
 
 public class RowMarkingValidator implements RowValidator {
@@ -26,7 +27,22 @@ public class RowMarkingValidator implements RowValidator {
     }
 
 
-    public static RowMarkingValidator rowValidator(Validator<Row> validator, ValidationMessage message) {
+    public static RowMarkingValidator rowValidator(ValidationMessage message, Validator<Row> validator) {
         return new RowMarkingValidator(validator, message);
+    }
+
+    public static RowMarkingValidator rowValidator(String msg, Validator<Row> validator) {
+        return new RowMarkingValidator(validator, validationError(msg));
+    }
+
+    public static RowValidator composite(RowValidator... validators) {
+        return new RowValidator() {
+            @Override
+            public void validate(List<Row> rows) {
+                for (RowValidator validator : validators) {
+                    validator.validate(rows);
+                }
+            }
+        };
     }
 }

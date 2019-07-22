@@ -1,5 +1,6 @@
-package com.falco.workshop.validation;
+package com.falco.workshop.validation.validators;
 
+import com.falco.workshop.validation.Validator;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;

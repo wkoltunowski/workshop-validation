@@ -1,6 +1,7 @@
-package com.falco.workshop.validation;
+package com.falco.workshop.validation.validators;
 
 
+import com.falco.workshop.validation.Validator;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
@@ -38,5 +39,4 @@ public class ExtraRowsValidator<T> implements Validator<T> {
     public static <T> Validator<T> extraRows(List<T> extraRows, Validator<T> validator) {
         return new ExtraRowsValidator<>(extraRows, validator);
     }
-
 }
