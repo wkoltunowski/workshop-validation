@@ -36,12 +36,9 @@ public class RowMarkingValidator implements RowValidator {
     }
 
     public static RowValidator composite(RowValidator... validators) {
-        return new RowValidator() {
-            @Override
-            public void validate(List<Row> rows) {
-                for (RowValidator validator : validators) {
-                    validator.validate(rows);
-                }
+        return rows -> {
+            for (RowValidator validator : validators) {
+                validator.validate(rows);
             }
         };
     }

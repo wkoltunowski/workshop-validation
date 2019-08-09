@@ -2,9 +2,11 @@ package com.falco.workshop.validation;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.falco.workshop.validation.ValidationMessage.validationError;
 import static com.google.common.collect.ImmutableList.of;
+import static java.util.Comparator.comparing;
 
 public class OrgUnitValidator implements RowValidator {
 
@@ -33,9 +35,17 @@ public class OrgUnitValidator implements RowValidator {
     }
 
     private boolean overlap(Row row, Row another) {
-        Row first = from(row) == null || from(row).isBefore(from(another)) ? row : another;
-        Row second = from(row) == null || from(row).isBefore(from(another)) ? another : row;
+        Row first = min(row, another);
+        Row second = max(row, another);
         return from(second) == null || to(first) == null || !from(second).isAfter(to(first));
+    }
+
+    private Row min(Row row, Row another) {
+        return Stream.of(row, another).min(comparing(this::from)).get();
+    }
+
+    private Row max(Row row, Row another) {
+        return Stream.of(row, another).max(comparing(this::from)).get();
     }
 
     private LocalDate to(Row row) {

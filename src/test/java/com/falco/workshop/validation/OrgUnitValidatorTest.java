@@ -13,6 +13,7 @@ import static com.falco.workshop.validation.RowMarkingValidator.rowValidator;
 import static com.falco.workshop.validation.ValidationMessage.validationError;
 import static com.falco.workshop.validation.validators.EmptyPropertyValidator.emptyProperty;
 import static com.falco.workshop.validation.validators.GroupingValidator.groupingBy;
+import static com.falco.workshop.validation.validators.GuavaOverlappingValidator.guavaOverlapping;
 import static com.falco.workshop.validation.validators.IntervalValidator.invalidInterval;
 import static com.falco.workshop.validation.validators.OverlappingValidator.overlapping;
 import static com.google.common.collect.ImmutableList.of;
@@ -28,7 +29,8 @@ public class OrgUnitValidatorTest {
                 rowValidator("msg.empty.code", emptyProperty("code")),
                 rowValidator("msg.empty.company", emptyProperty("company")),
                 rowValidator("msg.invalid.interval", invalidInterval("from", "to")),
-                rowValidator("msg.overlapping.codes", groupingBy(of("code", "company"), overlapping("from", "to")))
+//                rowValidator("msg.overlapping.codes", groupingBy(of("code", "company"), overlapping("from", "to")))
+                rowValidator("msg.overlapping.codes", groupingBy(of("code", "company"), guavaOverlapping("from", "to")))
         );
         table = new Table(of(new OrgUnitValidator()));
 //        table = new Table(of(v));
@@ -53,7 +55,6 @@ public class OrgUnitValidatorTest {
         validateRows(row(from("2018-02-01"), to("2018-01-01"), code("POR_1"), company("X")));
         assertThat(rowValidationResults(0)).containsOnly(validationError("msg.invalid.interval"));
     }
-
 
     @Test
     public void shouldDetectDuplicateCodes() {
