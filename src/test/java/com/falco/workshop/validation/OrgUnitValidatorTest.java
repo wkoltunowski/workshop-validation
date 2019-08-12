@@ -8,14 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.falco.workshop.validation.RowMarkingValidator.composite;
-import static com.falco.workshop.validation.RowMarkingValidator.rowValidator;
 import static com.falco.workshop.validation.ValidationMessage.validationError;
-import static com.falco.workshop.validation.validators.EmptyPropertyValidator.emptyProperty;
-import static com.falco.workshop.validation.validators.GroupingValidator.groupingBy;
-import static com.falco.workshop.validation.validators.GuavaOverlappingValidator.guavaOverlapping;
-import static com.falco.workshop.validation.validators.IntervalValidator.invalidInterval;
-import static com.falco.workshop.validation.validators.OverlappingValidator.overlapping;
 import static com.google.common.collect.ImmutableList.of;
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,15 +18,7 @@ public class OrgUnitValidatorTest {
     private Table table;
 
     private void validateRows(Row... rows) {
-        RowValidator v = composite(
-                rowValidator("msg.empty.code", emptyProperty("code")),
-                rowValidator("msg.empty.company", emptyProperty("company")),
-                rowValidator("msg.invalid.interval", invalidInterval("from", "to")),
-//                rowValidator("msg.overlapping.codes", groupingBy(of("code", "company"), overlapping("from", "to")))
-                rowValidator("msg.overlapping.codes", groupingBy(of("code", "company"), guavaOverlapping("from", "to")))
-        );
         table = new Table(of(new OrgUnitValidator()));
-//        table = new Table(of(v));
         table.addRows(rows);
         table.validateTable();
     }
