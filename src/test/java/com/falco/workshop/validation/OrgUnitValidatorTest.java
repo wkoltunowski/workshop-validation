@@ -8,14 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.falco.workshop.validation.RowMarkingValidator.composite;
-import static com.falco.workshop.validation.RowMarkingValidator.rowValidator;
 import static com.falco.workshop.validation.ValidationMessage.validationError;
-import static com.falco.workshop.validation.validators.EmptyPropertyValidator.emptyProperty;
-import static com.falco.workshop.validation.validators.GroupingValidator.groupingBy;
-import static com.falco.workshop.validation.validators.GuavaOverlappingValidator.guavaOverlapping;
-import static com.falco.workshop.validation.validators.IntervalValidator.invalidInterval;
-import static com.falco.workshop.validation.validators.OverlappingValidator.overlapping;
 import static com.google.common.collect.ImmutableList.of;
 import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,35 +18,9 @@ public class OrgUnitValidatorTest {
     private Table table;
 
     private void validateRows(Row... rows) {
-        RowValidator v = composite(
-                rowValidator("msg.empty.code", emptyProperty("code")),
-                rowValidator("msg.empty.company", emptyProperty("company")),
-                rowValidator("msg.invalid.interval", invalidInterval("from", "to")),
-//                rowValidator("msg.overlapping.codes", groupingBy(of("code", "company"), overlapping("from", "to")))
-                rowValidator("msg.overlapping.codes", groupingBy(of("code", "company"), guavaOverlapping("from", "to")))
-        );
         table = new Table(of(new OrgUnitValidator()));
-//        table = new Table(of(v));
         table.addRows(rows);
         table.validateTable();
-    }
-
-    @Test
-    public void shouldDetectEmptyCode() {
-        validateRows(row(from("2018-01-01"), to("2018-01-31"), code(null), company("X")));
-        assertThat(rowValidationResults(0)).containsOnly(validationError("msg.empty.code"));
-    }
-
-    @Test
-    public void shouldDetectEmptyCompany() {
-        validateRows(row(from("2018-01-01"), to("2018-01-31"), code("POR_1"), company(null)));
-        assertThat(rowValidationResults(0)).containsOnly(validationError("msg.empty.company"));
-    }
-
-    @Test
-    public void shouldDetectFromAfterTo() {
-        validateRows(row(from("2018-02-01"), to("2018-01-01"), code("POR_1"), company("X")));
-        assertThat(rowValidationResults(0)).containsOnly(validationError("msg.invalid.interval"));
     }
 
     @Test
@@ -67,10 +34,11 @@ public class OrgUnitValidatorTest {
     }
 
     @Test
-    public void shouldTreatNullAsInfinity() {
+    public void shouldDetectDuplicateCodesInAllRows() {
         validateRows(
-                row(from("2018-01-01"), to(null), code("POR_1"), company("X")),
-                row(from("2018-01-10"), to("2018-02-01"), code("POR_1"), company("X")));
+                row(from("2018-01-01"), to("2018-01-30"), code("POR_1"), company("X")),
+                row(from("2018-01-10"), to("2018-01-15"), code("POR_1"), company("X")),
+                row(from("2018-01-20"), to("2018-02-01"), code("POR_1"), company("X")));
 
         assertThat(rowValidationResults(0)).containsOnly(validationError("msg.overlapping.codes"));
         assertThat(rowValidationResults(1)).containsOnly(validationError("msg.overlapping.codes"));
