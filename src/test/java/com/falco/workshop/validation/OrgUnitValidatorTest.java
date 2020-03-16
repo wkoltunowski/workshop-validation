@@ -26,8 +26,8 @@ public class OrgUnitValidatorTest {
     @Test
     public void shouldDetectDuplicateCodes() {
         validateRows(
-                row(from("2018-01-01"), to("2018-01-31"), code("POR_1"), company("X")),
-                row(from("2018-01-10"), to("2018-02-01"), code("POR_1"), company("X")));
+                row(from("2018-01-01"), to("2018-01-31"), code("POR_1")),
+                row(from("2018-01-10"), to("2018-02-01"), code("POR_1")));
 
         assertThat(rowValidationResults(0)).containsOnly(validationError("msg.overlapping.codes"));
         assertThat(rowValidationResults(1)).containsOnly(validationError("msg.overlapping.codes"));
@@ -36,9 +36,9 @@ public class OrgUnitValidatorTest {
     @Test
     public void shouldDetectDuplicateCodesInAllRows() {
         validateRows(
-                row(from("2018-01-01"), to("2018-01-30"), code("POR_1"), company("X")),
-                row(from("2018-01-10"), to("2018-01-15"), code("POR_1"), company("X")),
-                row(from("2018-01-20"), to("2018-02-01"), code("POR_1"), company("X")));
+                row(from("2018-01-01"), to("2018-01-30"), code("POR_1")),
+                row(from("2018-01-10"), to("2018-01-15"), code("POR_1")),
+                row(from("2018-01-20"), to("2018-02-01"), code("POR_1")));
 
         assertThat(rowValidationResults(0)).containsOnly(validationError("msg.overlapping.codes"));
         assertThat(rowValidationResults(1)).containsOnly(validationError("msg.overlapping.codes"));
@@ -47,8 +47,8 @@ public class OrgUnitValidatorTest {
     @Test
     public void shouldNotDetectWhenDifferentCodes() {
         validateRows(
-                row(from("2018-01-01"), to("2018-01-31"), code("POR_1"), company("X")),
-                row(from("2018-01-10"), to("2018-02-01"), code("POR_2"), company("X")));
+                row(from("2018-01-01"), to("2018-01-31"), code("POR_1")),
+                row(from("2018-01-10"), to("2018-02-01"), code("POR_2")));
 
         assertThat(rowValidationResults(0)).isEmpty();
         assertThat(rowValidationResults(1)).isEmpty();
@@ -57,25 +57,11 @@ public class OrgUnitValidatorTest {
     @Test
     public void shouldNotDetectDuplicateCodesWhenNoOverlap() {
         validateRows(
-                row(from("2018-01-01"), to("2018-01-10"), code("POR_1"), company("X")),
-                row(from("2018-01-11"), to("2018-01-31"), code("POR_1"), company("X")));
+                row(from("2018-01-01"), to("2018-01-10"), code("POR_1")),
+                row(from("2018-01-11"), to("2018-01-31"), code("POR_1")));
 
         assertThat(rowValidationResults(0)).isEmpty();
         assertThat(rowValidationResults(1)).isEmpty();
-    }
-
-    @Test
-    public void shouldNotDetectDuplicateCodesWhenDifferentCompany() {
-        validateRows(
-                row(from("2018-01-01"), to("2018-01-10"), code("POR_1"), company("X")),
-                row(from("2018-01-05"), to("2018-01-31"), code("POR_1"), company("Y")));
-
-        assertThat(rowValidationResults(0)).isEmpty();
-        assertThat(rowValidationResults(1)).isEmpty();
-    }
-
-    private Consumer<Map<String, Object>> company(String companyCode) {
-        return m -> m.put("company", companyCode);
     }
 
     private Set<ValidationMessage> rowValidationResults(int i) {
